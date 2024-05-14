@@ -10,6 +10,7 @@ def process_files(request):
     if request.method == 'POST' and 'file1' in request.FILES and 'file2' in request.FILES:
         file1 = request.FILES['file1']
         file2 = request.FILES['file2']
+        print("hello World")
         
         # Read content of file1
         file1_content = file1.read().decode('utf-8')
