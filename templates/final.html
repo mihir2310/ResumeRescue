@@ -3,9 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Files Processed</title>
+    <title>Upload Job Description and Resume</title>
 </head>
 <body>
-    <h1>Files Processed!</h1>
+    <h1>Upload Job Description (PNG) and Resume (PDF)</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+    
+    {% if form.errors %}
+        <div style="color: red;">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
 </body>
 </html>

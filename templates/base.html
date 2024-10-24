@@ -20,32 +20,24 @@
             color: #000;
             text-align: center;
             padding: 20px 0;
-            border-bottom: 1px solid #ccc; /* Add border */
-        }
-        .description {
-            background-color: #ffffff;
-            color: #000;
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #ccc; /* Add border */
+            border-bottom: 1px solid #ccc;
         }
         .container {
             display: flex;
             justify-content: space-between;
             margin: 20px;
-            border: 2px solid #ccc; /* Increase border width */
+            border: 2px solid #ccc;
         }
         .box {
-            width: calc(50% - 10px); /* Half of the container width with margin */
-            height: calc(50% - 10px); /* Half of the container height with margin */
+            width: calc(50% - 10px);
+            height: calc(50% - 10px);
             padding: 20px;
-            border-right: 1px solid #ccc; /* Add border */
+            border-right: 1px solid #ccc;
             box-sizing: border-box;
         }
         .box:last-child {
-            border-right: none; /* Remove border for the last box */
+            border-right: none;
         }
-        /* Customize file upload boxes */
         .box input[type="file"] {
             display: none;
         }
@@ -53,17 +45,17 @@
             display: block;
             padding: 10px;
             border: 2px solid #000000;
-            background-color: #f7f7f7; /* Change background color */
-            color: #000000; /* Change text color */
+            background-color: #f7f7f7;
+            color: #000000;
             text-align: center;
             cursor: pointer;
             transition: background-color 0.1s, color 0.1s;
-            height: 100%; /* Set height */
-            line-height: 50px; /* Center content vertically */
+            height: 100%;
+            line-height: 50px;
         }
         .box label:hover {
-            background-color: #000000; /* Change background color on hover */
-            color: #fff; /* Change text color on hover */
+            background-color: #000000;
+            color: #fff;
         }
         .box label.file-label {
             margin-bottom: 10px;
@@ -73,10 +65,9 @@
         }
         .submit-container {
             display: flex;
-            justify-content: center; /* Center the content horizontally */
+            justify-content: center;
             margin-top: 20px;
         }
-        /* Bootstrap button classes */
         .submit-btn {
             padding: 10px;
         }
@@ -88,7 +79,7 @@
             color: #000;
             text-align: center;
             padding: 20px 0;
-            border-top: 1px solid #ccc; /* Add border */
+            border-top: 1px solid #ccc;
         }
     </style>
 </head>
@@ -97,40 +88,35 @@
         <h1>ResumeRescue</h1>
     </div>
     
-    <div class="container">
-        <div class="box">
-            <input type="file" id="file1" name="file1" onchange="displayFileName(this)">
-            <label for="file1" class="file-label">Upload Job Description</label>
-            <div id="file1-name" class="file-name"></div>
+    <!-- Updated form -->
+    <form id="uploadForm" action="{% url 'upload' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+            <div class="box">
+                <input type="file" id="file1" name="job_description" onchange="displayFileName(this)">
+                <label for="file1" class="file-label">Upload Job Description</label>
+                <div id="file1-name" class="file-name"></div>
+            </div>
+            <div class="box">
+                <input type="file" id="file2" name="resume_cv" onchange="displayFileName(this)">
+                <label for="file2" class="file-label">Upload Resume/CV</label>
+                <div id="file2-name" class="file-name"></div>
+            </div>
+        </div>        
+    
+        <div id="upload-error" style="color: red; text-align: center;"></div>
+    
+        <div class="submit-container">
+            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
         </div>
-        <div class="box">
-            <input type="file" id="file2" name="file2" onchange="displayFileName(this)">
-            <label for="file2" class="file-label">Upload Resume/CV</label>
-            <div id="file2-name" class="file-name"></div>
-        </div>
-    </div>
-    
-    <div id="upload-error" style="color: red; text-align: center;"></div> <!-- Error message placeholder -->
-    
-    <div class="submit-container">
-        <button class="btn btn-primary submit-btn" onclick="submitForm()">Submit</button>
-    </div>
-    
+    </form>
+
     <script>
         function displayFileName(input) {
             const fileName = input.files[0].name;
             const boxId = input.id + "-name";
             document.getElementById(boxId).innerText = fileName;
         }
-    
-        function submitForm() {
-            redirectToNextPage();
-        }
-
-    
-        function redirectToNextPage() {
-            // Replace 'next_page_url' with the actual URL of the next page
-            window.location.href = 'final/'; // Assuming the final page is named final/
-        }
     </script>
-    
+</body>
+</html>
