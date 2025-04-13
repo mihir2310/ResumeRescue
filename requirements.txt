@@ -1,6 +1,12 @@
-django==4.2.10
-python-dotenv==0.20.0  # Use python-dotenv instead of dotenv
-opencv-python-headless==4.8.0.76  # OpenCV for image processing
-pytesseract==0.3.10  # Tesseract OCR for extracting text from images
-PyPDF2==3.0.1  # For extracting text from PDF resumes
-openai==0.27.0  # OpenAI API for generating recommendations
+Django==4.2.10
+python-dotenv==0.20.0
+opencv-python-headless==4.8.0.76
+pytesseract==0.3.10
+PyPDF2==3.0.1
+Pillow==10.0.0
+numpy==1.24.3
+pytest==7.4.0
+pytest-django==4.5.2
+black==23.7.0
+flake8==6.1.0
+isort==5.12.0

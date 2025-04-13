@@ -3,26 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Job Description and Resume</title>
+    <title>Resume Analysis Results - ResumeRescue</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-color: #1f2937;
+            --light-gray: #f3f4f6;
+            --border-color: #e5e7eb;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .match-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin: 1rem 0;
+        }
+
+        .recommendation {
+            background-color: var(--light-gray);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .skill-tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .missing-skill {
+            background-color: var(--warning-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            background-color: #fee2e2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Job Description (PNG) and Resume (PDF)</h1>
-    
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
-    
-    {% if form.errors %}
-        <div style="color: red;">
-            <ul>
-                {% for field, errors in form.errors.items %}
-                    <li>{{ field }}: {{ errors|join:", " }}</li>
-                {% endfor %}
-            </ul>
+    <div class="container">
+        <div class="header text-center">
+            <h1>Resume Analysis Results</h1>
         </div>
-    {% endif %}
-    
+
+        {% if form.errors %}
+            <div class="error-message">
+                <h3>Error Processing Documents</h3>
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li>{{ field }}: {{ errors|join:", " }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="results-container">
+                <div class="section">
+                    <h2 class="section-title">Overall Match Score</h2>
+                    <div class="match-score">
+                        {{ match_score }}%
+                    </div>
+                    <p>This score indicates how well your resume matches the job requirements.</p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Key Skills Analysis</h2>
+                    <div class="skill-list">
+                        {% for skill in matching_skills %}
+                            <span class="skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                        {% for skill in missing_skills %}
+                            <span class="skill-tag missing-skill">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Recommendations</h2>
+                    {% for recommendation in recommendations %}
+                        <div class="recommendation">
+                            <i class="fas fa-lightbulb"></i>
+                            {{ recommendation }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="text-center">
+            <a href="{% url 'home' %}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Analyze Another Resume
+            </a>
+        </div>
+    </div>
 </body>
 </html>
