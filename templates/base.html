@@ -186,6 +186,7 @@
         </div>
         {% endif %}
 
+        {% block content %}
         <form id="uploadForm" action="{% url 'upload' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="upload-container">
@@ -202,32 +203,35 @@
                     <div class="col-md-6">
                         <div class="upload-box" onclick="document.getElementById('file2').click()">
                             <i class="fas fa-file-pdf"></i>
-                            <h3>Your Resume/CV</h3>
-                            <p>Upload your resume or CV</p>
-                            <input type="file" id="file2" name="resume_cv" accept=".pdf,.doc,.docx" style="display: none;">
+                            <h3>Resume/CV</h3>
+                            <p>Upload your resume/CV in PDF format</p>
+                            <input type="file" id="file2" name="resume_cv" accept=".pdf" style="display: none;">
                             <div id="resumeName" class="file-name"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="error-message" class="error-message"></div>
-            <div id="success-message" class="success-message"></div>
-            
-            <div class="loading">
-                <i class="fas fa-spinner"></i>
-                <p>Analyzing your documents...</p>
-            </div>
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary submit-btn">
-                    <i class="fas fa-magic"></i> Analyze Documents
-                </button>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary submit-btn">
+                        <i class="fas fa-upload"></i> Analyze Resume
+                    </button>
+                </div>
+                
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Analyzing your resume...</p>
+                </div>
+                
+                <div class="error-message"></div>
+                <div class="success-message"></div>
             </div>
         </form>
+        {% endblock %}
     </div>
 
-    <!-- Custom JavaScript -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

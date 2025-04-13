@@ -15,17 +15,17 @@ import os
 from dotenv import load_dotenv  # Import load_dotenv
 import pytesseract
 
+# Load environment variables from .env file
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load environment variables from the .env file
-load_dotenv(os.path.join(BASE_DIR, '.env'))  # Specify the correct path to your .env file
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-here'  # Change this in production
+SECRET_KEY = 'django-insecure-your-secret-key'
 
 # Use the API key from the environment variable
 OPENAI_API_KEY = os.getenv("OPEN_AI_TOKEN")  # Access the OpenAI API key

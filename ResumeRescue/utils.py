@@ -4,6 +4,11 @@ import numpy as np
 from PIL import Image
 import io
 import re
+import os
+from openai import OpenAI
+
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 def preprocess_image(image_data):
     """Preprocess the image for better OCR results"""
@@ -124,8 +129,59 @@ def extract_key_requirements(text):
     
     return requirements
 
-def analyze_resume_match(resume_text, job_requirements):
-    """Analyze how well the resume matches the job requirements"""
+def analyze_with_gpt(job_description, resume_text):
+    """Use GPT to analyze the match between resume and job description"""
+    try:
+        prompt = f"""
+        You are an expert resume analyzer and career coach. Analyze how well the candidate's resume matches the job description.
+        Focus on both technical skills and soft skills. Consider experience level, education, and specific achievements.
+        
+        Job Description:
+        {job_description}
+
+        Resume:
+        {resume_text}
+
+        Provide a detailed analysis in the following JSON format:
+        {{
+            "match_score": <number between 0-100>,
+            "matching_skills": [<list of skills/qualifications that match>],
+            "missing_skills": [<list of required skills/qualifications that are missing or need strengthening>],
+            "recommendations": [<specific, actionable recommendations to improve the resume>],
+            "explanation": "<brief explanation of the score and key factors>"
+        }}
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4-turbo-preview",
+            messages=[
+                {"role": "system", "content": "You are an expert resume analyzer focusing on tech roles."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={ "type": "json_object" }
+        )
+
+        # Parse the response
+        analysis = eval(response.choices[0].message.content)
+        return analysis
+
+    except Exception as e:
+        print(f"Error in GPT analysis: {str(e)}")
+        # Fall back to basic analysis if GPT fails
+        return analyze_resume_match_basic(resume_text, extract_key_requirements(job_description))
+
+def analyze_resume_match(resume_text, job_description):
+    """Main analysis function that tries GPT first, falls back to basic analysis"""
+    try:
+        # Try GPT analysis first
+        return analyze_with_gpt(job_description, resume_text)
+    except Exception as e:
+        print(f"Falling back to basic analysis due to error: {str(e)}")
+        # Fall back to basic analysis
+        return analyze_resume_match_basic(resume_text, extract_key_requirements(job_description))
+
+def analyze_resume_match_basic(resume_text, job_requirements):
+    """Basic analysis as fallback when GPT is unavailable"""
     matching_skills = []
     missing_skills = []
     
@@ -166,7 +222,13 @@ def analyze_resume_match(resume_text, job_requirements):
     return {
         'match_score': match_score,
         'matching_skills': matching_skills,
-        'missing_skills': missing_skills
+        'missing_skills': missing_skills,
+        'recommendations': generate_recommendations({
+            'match_score': match_score,
+            'matching_skills': matching_skills,
+            'missing_skills': missing_skills
+        }),
+        'explanation': "Analysis performed using basic keyword matching."
     }
 
 def generate_recommendations(analysis_results):
